@@ -75,6 +75,15 @@ export async function salvarPedidoImportado(dados: {
     return { erro: 'Sem permissão para importar pedidos' }
   }
 
+  // Check if pedido already exists
+  const pedidoExistente = await prisma.pedido.findUnique({
+    where: { numero: dados.numeroPedido },
+  })
+
+  if (pedidoExistente) {
+    return { erro: `Pedido número ${dados.numeroPedido} já existe no sistema.` }
+  }
+
   const cliente = await prisma.cliente.upsert({
     where: { cnpj: dados.cliente.cnpj },
     update: {},
