@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  VENDEDOR
+  ESTOQUE
+  CONFERENCIA
+  FATURAMENTO
+  EXPEDICAO
+}
+
+enum StatusPedido {
+  AGUARDANDO_SEPARACAO
+  SEPARACAO
+  CONFERENCIA
+  CONFERIDO
+  FATURAMENTO
+  SEPARACAO_DESTINATARIO
+  CONCLUIDO
+}
+
+model Usuario {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  role      Role
+  createdAt DateTime @default(now())
+
+  pedidosComoVendedor Pedido[]          @relation("Vendedor")
+  historicos          HistoricoStatus[]
+}
+
+model Cliente {
+  id                String   @id @default(uuid())
+  razaoSocial       String
+  nomeFantasia      String?
+  cnpj              String   @unique
+  inscricaoEstadual String?
+  telefone          String?
+  email             String?
+  endereco          String?
+  bairro            String?
+  cep               String?
+  cidade            String?
+  estado            String?
+  pedidos           Pedido[]
+}
+
+model Produto {
+  id        String       @id @default(uuid())
+  codigo    String       @unique
+  descricao String
+  unidade   String
+  itens     ItemPedido[]
+}
+
+model Pedido {
+  id                String            @id @default(uuid())
+  numero            Int               @unique
+  cliente           Cliente           @relation(fields: [clienteId], references: [id])
+  clienteId         String
+  vendedor          Usuario           @relation("Vendedor", fields: [vendedorId], references: [id])
+  vendedorId        String
+  condicaoPagamento String
+  dataEmissao       DateTime
+  valorTotal        Decimal
+  statusAtual       StatusPedido      @default(AGUARDANDO_SEPARACAO)
+  itens             ItemPedido[]
+  historico         HistoricoStatus[]
+  createdAt         DateTime          @default(now())
+}
+
+model ItemPedido {
+  id           String  @id @default(uuid())
+  pedido       Pedido  @relation(fields: [pedidoId], references: [id])
+  pedidoId     String
+  produto      Produto @relation(fields: [produtoId], references: [id])
+  produtoId    String
+  quantidade   Int
+  precoLiquido Decimal
+  subtotal     Decimal
+}
+
+model HistoricoStatus {
+  id         String       @id @default(uuid())
+  pedido     Pedido       @relation(fields: [pedidoId], references: [id])
+  pedidoId   String
+  status     StatusPedido
+  usuario    Usuario      @relation(fields: [usuarioId], references: [id])
+  usuarioId  String
+  observacao String?
+  criadoEm   DateTime     @default(now())
+}
+
+model SlaConfig {
+  status         StatusPedido @id
+  avisoMinutos   Int
+  criticoMinutos Int
+}
