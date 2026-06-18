@@ -70,10 +70,13 @@ export default async function PainelPage(props: {
     <div>
       <PainelPoller intervaloMs={20000} />
 
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Painel de Pedidos</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-900">Painel de Pedidos</h1>
         {filtroVendedorId && (
-          <a href="/painel" className="text-sm text-blue-600 hover:underline">
+          <a href="/painel" className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
             Limpar filtro
           </a>
         )}
@@ -84,7 +87,7 @@ export default async function PainelPage(props: {
         concluidosHoje={concluidosHoje}
       />
 
-      <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${STATUS_KANBAN.length}, minmax(0, 1fr))` }}>
+      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${STATUS_KANBAN.length}, minmax(0, 1fr))` }}>
         {colunas.map(({ status, pedidos: colPedidos }) => (
           <KanbanColuna
             key={status}
@@ -95,7 +98,10 @@ export default async function PainelPage(props: {
         ))}
       </div>
 
-      <p className="mt-4 text-right text-xs text-gray-400">
+      <p className="mt-6 text-right text-xs text-slate-400 flex items-center justify-end gap-2">
+        <svg className="h-3 w-3 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
         Atualiza automaticamente a cada 20 segundos
       </p>
     </div>
