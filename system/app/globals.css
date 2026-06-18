@@ -1,25 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  
+  /* Primary Kabru */
+  --primary-yellow: #FFD700;
+  --primary-yellow-dark: #E5C100;
+  --primary-vulcan-gray: #333333;
+  
+  /* Secondary */
+  --secondary-dark: #0A0A0A;
+  --secondary-silver: #C0C0C0;
+  
+  /* Accents */
+  --accent-blue: #007ACC;
+  --accent-success: #10B981;
+  --accent-warning: #F59E0B;
+  --accent-danger: #EF4444;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-danger: var(--danger);
+  --color-primary-yellow: var(--primary-yellow);
+  --color-primary-yellow-dark: var(--primary-yellow-dark);
+  --color-primary-vulcan-gray: var(--primary-vulcan-gray);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-silver: var(--secondary-silver);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-success: var(--accent-success);
+  --color-accent-warning: var(--accent-warning);
+  --color-accent-danger: var(--accent-danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
