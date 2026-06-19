@@ -30,6 +30,7 @@ export const LABEL_STATUS: Record<StatusPedido, string> = {
 }
 
 export const STATUS_KANBAN: StatusPedido[] = [
+  'AGUARDANDO_SEPARACAO',
   'SEPARACAO',
   'CONFERENCIA',
   'CONFERIDO',
