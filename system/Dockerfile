@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --no-cache git
 
 # Copy package files
-COPY package.json package-lock.json* ./
+COPY system/package.json system/package-lock.json* ./
 
 # Install dependencies
 RUN npm ci --ignore-scripts
@@ -19,10 +19,10 @@ WORKDIR /app
 
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json* ./
+COPY system/package.json system/package-lock.json* ./
 
 # Copy the rest of the application code
-COPY . .
+COPY system/ .
 
 # Generate Prisma Client
 RUN npx prisma generate
