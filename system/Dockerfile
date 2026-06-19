@@ -3,34 +3,26 @@ FROM node:22-alpine AS deps
 
 WORKDIR /app
 
-# Install git and other dependencies if needed
 RUN apk add --no-cache git
 
-# Copy package files
 COPY system/package.json system/package-lock.json* ./
 
-# Install dependencies
-RUN npm ci --ignore-scripts
+# Sem --ignore-scripts para não pular postinstall do Prisma e outros pacotes nativos
+RUN npm ci
 
 # Stage 2: Build application
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY system/package.json system/package-lock.json* ./
-
-# Copy the rest of the application code
 COPY system/ .
 
-# Generate Prisma Client
 RUN npx prisma generate
 
-# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build the application
 RUN npm run build
 
 # Stage 3: Production runner
@@ -38,35 +30,31 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 
-# Set environment variables
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create a non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser  --system --uid 1001 nextjs
 
-# Copy public files
 COPY --from=builder /app/public ./public
-
-# Copy the standalone build output and set permissions
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma files
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# Copia todo node_modules (necessário para pg, @prisma/adapter-pg, etc.)
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
-# Switch to the non-root user
+# prisma.config.ts contém a DATABASE_URL no Prisma 7 (não fica no schema.prisma)
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
+
+COPY --chown=nextjs:nodejs entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
 USER nextjs
 
-# Expose the port the app runs on
 EXPOSE 3000
-
-# Set environment variables
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-# Start the application
-CMD ["node", "server.js"]
+# entrypoint.sh executa as migrations antes de iniciar o servidor
+CMD ["./entrypoint.sh"]
