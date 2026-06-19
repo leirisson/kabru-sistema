@@ -1,0 +1,9 @@
+system/node_modules
+system/.next
+system/.env
+system/.env.*
+!system/.env.example
+system/coverage
+system/npm-debug.log*
+system/*.tsbuildinfo
+system/next-env.d.ts
