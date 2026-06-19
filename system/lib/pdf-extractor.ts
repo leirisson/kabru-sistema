@@ -1,24 +1,19 @@
 import 'server-only'
-import * as pdfjsLib from 'pdfjs-dist'
-import * as pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs'
-
-// Configure pdf.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+import PDFParser from 'pdf2json'
 
 export async function extrairTextoPDF(buffer: Buffer): Promise<string> {
-  const typedArray = new Uint8Array(buffer)
-  const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise
-  
-  let fullText = ''
-  
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i)
-    const textContent = await page.getTextContent()
-    const pageText = textContent.items
-      .map((item: any) => item.str)
-      .join(' ')
-    fullText += pageText + '\n'
-  }
-  
-  return fullText
+  return new Promise((resolve, reject) => {
+    const pdfParser = new PDFParser(null, true)
+
+    pdfParser.on('pdfParser_dataError', (errData) => {
+      reject(new Error(errData.parserError))
+    })
+
+    pdfParser.on('pdfParser_dataReady', () => {
+      const text = pdfParser.getRawTextContent()
+      resolve(text)
+    })
+
+    pdfParser.parseBuffer(buffer)
+  })
 }

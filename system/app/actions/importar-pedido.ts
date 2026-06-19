@@ -76,7 +76,7 @@ export async function importarPedidoPDF(formData: FormData): Promise<ImportacaoR
     return { erro: 'O PDF não contém texto extraível.' }
   }
 
-  const modelo = process.env.OPENROUTER_MODEL ?? 'google/gemini-flash-1.5-8b'
+  const modelo = process.env.OPENROUTER_MODEL ?? 'google/gemini-2.5-flash-lite'
   let raw: string
   try {
     const completion = await openrouter.chat.completions.create({
