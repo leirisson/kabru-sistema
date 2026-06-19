@@ -6,7 +6,8 @@ export async function extrairTextoPDF(buffer: Buffer): Promise<string> {
     const pdfParser = new PDFParser(null, true)
 
     pdfParser.on('pdfParser_dataError', (errData) => {
-      reject(new Error(errData.parserError))
+      const err = errData instanceof Error ? errData : (errData as { parserError: Error }).parserError
+      reject(err instanceof Error ? err : new Error(String(err)))
     })
 
     pdfParser.on('pdfParser_dataReady', () => {
