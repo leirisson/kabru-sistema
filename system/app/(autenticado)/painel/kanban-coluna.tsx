@@ -4,11 +4,12 @@ import { LABEL_STATUS } from '@/lib/status-flow'
 import { PedidoCard } from './pedido-card'
 
 const STATUS_COLORS: Record<StatusPedido, string> = {
-  PENDENTE: 'from-yellow-500 to-amber-600',
-  ESTOQUE: 'from-blue-500 to-indigo-600',
+  AGUARDANDO_SEPARACAO: 'from-yellow-500 to-amber-600',
+  SEPARACAO: 'from-blue-500 to-indigo-600',
   CONFERENCIA: 'from-purple-500 to-violet-600',
+  CONFERIDO: 'from-cyan-500 to-blue-600',
   FATURAMENTO: 'from-emerald-500 to-teal-600',
-  EXPEDICAO: 'from-orange-500 to-red-600',
+  SEPARACAO_DESTINATARIO: 'from-orange-500 to-red-600',
   CONCLUIDO: 'from-green-500 to-emerald-600',
 }
 
