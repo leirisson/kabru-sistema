@@ -1,19 +1,23 @@
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #F8FAFC;
   --foreground: #0F172A;
   --card: #FFFFFF;
-  
+  --card-border: #E2E8F0;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+
   /* Primary Kabru */
   --primary-yellow: #FFD700;
   --primary-yellow-dark: #E5C100;
   --primary-vulcan-gray: #333333;
-  
+
   /* Secondary */
   --secondary-dark: #0A0A0A;
   --secondary-silver: #C0C0C0;
-  
+
   /* Accents */
   --accent-blue: #007ACC;
   --accent-success: #10B981;
@@ -21,10 +25,34 @@
   --accent-danger: #EF4444;
 }
 
+.dark {
+  --background: #0F172A;
+  --foreground: #F1F5F9;
+  --card: #1E293B;
+  --card-border: #334155;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+
+  --primary-yellow: #FFD700;
+  --primary-yellow-dark: #E5C100;
+  --primary-vulcan-gray: #CBD5E1;
+
+  --secondary-dark: #F1F5F9;
+  --secondary-silver: #475569;
+
+  --accent-blue: #38BDF8;
+  --accent-success: #34D399;
+  --accent-warning: #FCD34D;
+  --accent-danger: #F87171;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-primary-yellow: var(--primary-yellow);
   --color-primary-yellow-dark: var(--primary-yellow-dark);
   --color-primary-vulcan-gray: var(--primary-vulcan-gray);

@@ -38,14 +38,14 @@ export default async function TodosPedidosPage() {
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Todos os Pedidos</h1>
-            <p className="text-sm text-slate-500">{pedidos.length} pedido(s) encontrado(s)</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Todos os Pedidos</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{pedidos.length} pedido(s) encontrado(s)</p>
           </div>
         </div>
         {(session.role === 'VENDEDOR' || session.role === 'ADMIN') && (
           <Link
             href="/pedidos/importar"
-            className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition-all"
+            className="flex items-center gap-2 rounded-2xl bg-black px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 transition-all dark:bg-white dark:text-black dark:hover:bg-slate-200"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -55,39 +55,39 @@ export default async function TodosPedidosPage() {
         )}
       </div>
 
-      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-slate-50 border-b border-slate-100 dark:bg-slate-700/50 dark:border-slate-700">
               <tr>
-                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Pedido</th>
-                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Cliente</th>
-                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Vendedor</th>
-                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Status</th>
-                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Data Emissão</th>
-                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Itens</th>
-                <th className="px-8 py-5 text-right text-xs font-bold uppercase tracking-wide text-slate-600">Valor Total</th>
+                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Pedido</th>
+                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Cliente</th>
+                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Vendedor</th>
+                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Status</th>
+                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Data Emissão</th>
+                <th className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Itens</th>
+                <th className="px-8 py-5 text-right text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Valor Total</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {pedidos.map((pedido) => (
-                <tr key={pedido.id} className="hover:bg-slate-50/70 transition-colors group">
+                <tr key={pedido.id} className="hover:bg-slate-50/70 transition-colors group dark:hover:bg-slate-700/50">
                   <td className="px-8 py-5">
                     <Link href={`/painel/${pedido.id}`} className="flex items-center gap-4">
                       <div className={`flex h-11 w-11 items-center justify-center rounded-xl text-white text-sm font-bold ${STATUS_COLORS[pedido.statusAtual]}`}>
                         {pedido.numero}
                       </div>
-                      <span className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">#{pedido.numero}</span>
+                      <span className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors dark:text-slate-100 dark:group-hover:text-indigo-400">#{pedido.numero}</span>
                     </Link>
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900">{pedido.cliente.nomeFantasia || pedido.cliente.razaoSocial}</span>
-                      <span className="text-xs text-slate-500">{pedido.cliente.cnpj}</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">{pedido.cliente.nomeFantasia || pedido.cliente.razaoSocial}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{pedido.cliente.cnpj}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <span className="text-slate-700">{pedido.vendedor.nome}</span>
+                    <span className="text-slate-700 dark:text-slate-300">{pedido.vendedor.nome}</span>
                   </td>
                   <td className="px-8 py-5">
                     <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-white ${STATUS_COLORS[pedido.statusAtual]}`}>
@@ -95,20 +95,20 @@ export default async function TodosPedidosPage() {
                     </span>
                   </td>
                   <td className="px-8 py-5">
-                    <span className="text-slate-700">
+                    <span className="text-slate-700 dark:text-slate-300">
                       {new Date(pedido.dataEmissao).toLocaleDateString('pt-BR')}
                     </span>
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2">
-                      <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                       </svg>
-                      <span className="text-sm font-semibold text-slate-700">{pedido.itens.length}</span>
+                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{pedido.itens.length}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5 text-right">
-                    <span className="text-lg font-bold text-slate-900">
+                    <span className="text-lg font-bold text-slate-900 dark:text-slate-100">
                       {Number(pedido.valorTotal).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',

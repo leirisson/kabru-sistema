@@ -65,7 +65,7 @@ export function RevisaoForm({ vendedorId }: Props) {
   if (estado.fase === 'upload') {
     return (
       <form onSubmit={handleUpload} className="flex flex-col gap-6">
-        <div className="group relative overflow-hidden rounded-3xl border-2 border-dashed border-slate-300 bg-white p-10 text-center hover:border-indigo-500 hover:bg-indigo-50/50 transition-all">
+        <div className="group relative overflow-hidden rounded-3xl border-2 border-dashed border-slate-300 bg-white p-10 text-center hover:border-indigo-500 hover:bg-indigo-50/50 transition-all dark:border-slate-600 dark:bg-slate-800 dark:hover:border-indigo-500 dark:hover:bg-indigo-900/10">
           <div className="mb-4 flex justify-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg group-hover:scale-110 transition-transform">
               <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,8 +73,8 @@ export function RevisaoForm({ vendedorId }: Props) {
               </svg>
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">Selecione o PDF do pedido</h3>
-          <p className="text-slate-500 text-sm mb-6">Arraste e solte ou clique para selecionar</p>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2 dark:text-slate-100">Selecione o PDF do pedido</h3>
+          <p className="text-slate-500 text-sm mb-6 dark:text-slate-400">Arraste e solte ou clique para selecionar</p>
           <input
             type="file"
             name="pdf"
@@ -85,7 +85,7 @@ export function RevisaoForm({ vendedorId }: Props) {
         </div>
         <button
           type="submit"
-          className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 text-base font-semibold text-white shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition-all"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-black px-6 py-4 text-base font-semibold text-white shadow-lg hover:bg-slate-800 transition-all dark:bg-white dark:text-black dark:hover:bg-slate-200"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -107,8 +107,8 @@ export function RevisaoForm({ vendedorId }: Props) {
             </svg>
           </div>
         </div>
-        <h3 className="text-xl font-semibold text-slate-900 mb-2">Extraindo dados do PDF...</h3>
-        <p className="text-slate-500">Aguarde enquanto processamos seu arquivo</p>
+        <h3 className="text-xl font-semibold text-slate-900 mb-2 dark:text-slate-100">Extraindo dados do PDF...</h3>
+        <p className="text-slate-500 dark:text-slate-400">Aguarde enquanto processamos seu arquivo</p>
       </div>
     )
   }
@@ -124,8 +124,8 @@ export function RevisaoForm({ vendedorId }: Props) {
             </svg>
           </div>
         </div>
-        <h3 className="text-xl font-semibold text-slate-900 mb-2">Salvando pedido...</h3>
-        <p className="text-slate-500">Aguarde enquanto salvamos os dados</p>
+        <h3 className="text-xl font-semibold text-slate-900 mb-2 dark:text-slate-100">Salvando pedido...</h3>
+        <p className="text-slate-500 dark:text-slate-400">Aguarde enquanto salvamos os dados</p>
       </div>
     )
   }
@@ -133,22 +133,22 @@ export function RevisaoForm({ vendedorId }: Props) {
   if (estado.fase === 'erro') {
     return (
       <div className="flex flex-col gap-6">
-        <div className="rounded-2xl bg-red-50 border border-red-200 p-6">
+        <div className="rounded-2xl bg-red-50 border border-red-200 p-6 dark:bg-red-900/20 dark:border-red-800">
           <div className="flex items-start gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-red-600 flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-red-600 flex-shrink-0 dark:bg-red-900/40 dark:text-red-400">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-red-800 mb-1">Ocorreu um erro</h3>
-              <p className="text-red-700">{estado.mensagem}</p>
+              <h3 className="text-lg font-semibold text-red-800 mb-1 dark:text-red-300">Ocorreu um erro</h3>
+              <p className="text-red-700 dark:text-red-400">{estado.mensagem}</p>
             </div>
           </div>
         </div>
         <button
           onClick={() => setEstado({ fase: 'upload' })}
-          className="flex items-center justify-center gap-2 self-center rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+          className="flex items-center justify-center gap-2 self-center rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -166,22 +166,22 @@ export function RevisaoForm({ vendedorId }: Props) {
     <div className="flex flex-col gap-6">
       {/* Aviso de itens novos */}
       {temNovos && (
-        <div className="flex items-start gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600 flex-shrink-0">
+        <div className="flex items-start gap-4 rounded-2xl bg-amber-50 border border-amber-200 p-6 dark:bg-amber-900/20 dark:border-amber-800">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600 flex-shrink-0 dark:bg-amber-900/40 dark:text-amber-400">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-amber-800 mb-1">Itens novos detectados</h3>
-            <p className="text-amber-700">Itens em amarelo serão criados automaticamente ao confirmar o pedido.</p>
+            <h3 className="text-lg font-semibold text-amber-800 mb-1 dark:text-amber-300">Itens novos detectados</h3>
+            <p className="text-amber-700 dark:text-amber-400">Itens em amarelo serão criados automaticamente ao confirmar o pedido.</p>
           </div>
         </div>
       )}
 
       {/* Dados gerais */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 dark:text-slate-100">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -191,16 +191,16 @@ export function RevisaoForm({ vendedorId }: Props) {
         </h2>
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <dt className="text-sm font-medium text-slate-500 mb-1">Emissão</dt>
-            <dd className="text-base font-semibold text-slate-900">{dados.dataEmissao}</dd>
+            <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Emissão</dt>
+            <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">{dados.dataEmissao}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-slate-500 mb-1">Condição de Pagamento</dt>
-            <dd className="text-base font-semibold text-slate-900">{dados.condicaoPagamento}</dd>
+            <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Condição de Pagamento</dt>
+            <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">{dados.condicaoPagamento}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-slate-500 mb-1">Valor total</dt>
-            <dd className="text-2xl font-bold text-indigo-600">
+            <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Valor total</dt>
+            <dd className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
               {dados.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
             </dd>
           </div>
@@ -208,14 +208,14 @@ export function RevisaoForm({ vendedorId }: Props) {
       </div>
 
       {/* Cliente */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="mb-4 flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 className="text-lg font-bold text-slate-900">Cliente</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Cliente</h2>
           <span
             className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${
               entidades.clienteExiste
@@ -237,31 +237,31 @@ export function RevisaoForm({ vendedorId }: Props) {
         </div>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <dt className="text-sm font-medium text-slate-500 mb-1">Razão Social</dt>
-            <dd className="text-base font-semibold text-slate-900">{dados.cliente.razaoSocial}</dd>
+            <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Razão Social</dt>
+            <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">{dados.cliente.razaoSocial}</dd>
           </div>
           {dados.cliente.nomeFantasia && (
             <div>
-              <dt className="text-sm font-medium text-slate-500 mb-1">Nome Fantasia</dt>
-              <dd className="text-base font-semibold text-slate-900">{dados.cliente.nomeFantasia}</dd>
+              <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Nome Fantasia</dt>
+              <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">{dados.cliente.nomeFantasia}</dd>
             </div>
           )}
           <div>
-            <dt className="text-sm font-medium text-slate-500 mb-1">CNPJ</dt>
-            <dd className="text-base font-semibold text-slate-900">{dados.cliente.cnpj}</dd>
+            <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">CNPJ</dt>
+            <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">{dados.cliente.cnpj}</dd>
           </div>
           {dados.cliente.cidade && (
             <div>
-              <dt className="text-sm font-medium text-slate-500 mb-1">Cidade/UF</dt>
-              <dd className="text-base font-semibold text-slate-900">{dados.cliente.cidade}/{dados.cliente.estado}</dd>
+              <dt className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Cidade/UF</dt>
+              <dd className="text-base font-semibold text-slate-900 dark:text-slate-100">{dados.cliente.cidade}/{dados.cliente.estado}</dd>
             </div>
           )}
         </dl>
       </div>
 
       {/* Itens */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 dark:text-slate-100">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -277,14 +277,14 @@ export function RevisaoForm({ vendedorId }: Props) {
                 key={item.codigoProduto}
                 className={`rounded-2xl border px-5 py-4 transition-all ${
                   existe
-                    ? 'border-emerald-200 bg-emerald-50/50'
-                    : 'border-amber-200 bg-amber-50/50'
+                    ? 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-900/20'
+                    : 'border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-900/20'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-base font-bold text-slate-900">{item.codigoProduto}</span>
+                      <span className="text-base font-bold text-slate-900 dark:text-slate-100">{item.codigoProduto}</span>
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         existe ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                       }`}>
@@ -300,19 +300,19 @@ export function RevisaoForm({ vendedorId }: Props) {
                         {existe ? 'Existente' : 'Novo'}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-600">{item.descricao}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{item.descricao}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6 text-sm">
-                  <span className="font-semibold text-slate-700">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {item.quantidade} {item.unidade}
                   </span>
-                  <span className="text-slate-400">×</span>
-                  <span className="font-semibold text-slate-700">
+                  <span className="text-slate-400 dark:text-slate-500">×</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {item.precoLiquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
-                  <span className="text-slate-400">=</span>
-                  <span className="text-lg font-bold text-slate-900">
+                  <span className="text-slate-400 dark:text-slate-500">=</span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-slate-100">
                     {item.subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
                 </div>
@@ -325,7 +325,7 @@ export function RevisaoForm({ vendedorId }: Props) {
       <div className="flex flex-col sm:flex-row gap-4 pt-4">
         <button
           onClick={() => setEstado({ fase: 'upload' })}
-          className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-6 py-4 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+          className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-6 py-4 text-base font-semibold text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

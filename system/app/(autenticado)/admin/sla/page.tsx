@@ -33,8 +33,8 @@ export default async function SlaPage() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Configuração de SLA</h1>
-          <p className="text-sm text-slate-500">Defina os tempos de alerta e crítico por status</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Configuração de SLA</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Defina os tempos de alerta e crítico por status</p>
         </div>
       </div>
 
@@ -42,7 +42,7 @@ export default async function SlaPage() {
         {STATUS_KANBAN.map((status) => {
           const config = slaMap[status]
           return (
-            <div key={status} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm hover:shadow-md transition-all">
+            <div key={status} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm hover:shadow-md transition-all dark:border-slate-700 dark:bg-slate-800">
               <div className="flex items-center gap-3 mb-6">
                 <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${STATUS_COLORS[status]} text-white shadow-lg`}>
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,8 +50,8 @@ export default async function SlaPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">{LABEL_STATUS[status]}</h3>
-                  <p className="text-xs text-slate-500">Configurações</p>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{LABEL_STATUS[status]}</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Configurações</p>
                 </div>
               </div>
               <SlaForm

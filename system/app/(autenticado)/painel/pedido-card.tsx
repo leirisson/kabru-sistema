@@ -29,11 +29,11 @@ export function PedidoCard({ pedido, slaStatus, tempoDecorrido, userRole }: Prop
   const podeAvancar = proximoStatus ? ROLE_PODE_AVANCAR[userRole].includes(proximoStatus) : false
 
   return (
-    <div className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all">
+    <div className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500">
       <div className="flex items-start justify-between gap-3">
         <Link
           href={`/painel/${pedido.id}`}
-          className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors"
+          className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors dark:text-slate-100 dark:group-hover:text-indigo-400"
         >
           #{pedido.numero}
         </Link>
@@ -47,18 +47,18 @@ export function PedidoCard({ pedido, slaStatus, tempoDecorrido, userRole }: Prop
         </span>
       </div>
 
-      <p className="text-sm font-semibold text-slate-800 leading-tight">
+      <p className="text-sm font-semibold text-slate-800 leading-tight dark:text-slate-200">
         {pedido.cliente.nomeFantasia ?? pedido.cliente.razaoSocial}
       </p>
 
-      <div className="flex items-center justify-between text-xs text-slate-500">
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-1.5">
-          <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
           <span className="font-medium">{pedido.vendedor.nome}</span>
         </div>
-        <span className="font-bold text-slate-900">
+        <span className="font-bold text-slate-900 dark:text-slate-100">
           {Number(pedido.valorTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         </span>
       </div>

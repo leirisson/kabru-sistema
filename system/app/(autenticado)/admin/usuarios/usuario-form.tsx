@@ -39,45 +39,45 @@ export function UsuarioForm({ usuario, onConcluido }: Props) {
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-700">Nome</label>
+          <label className="text-xs font-medium text-gray-700 dark:text-slate-300">Nome</label>
           <input
             name="nome"
             defaultValue={usuario?.nome}
             required
-            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-700">Email</label>
+          <label className="text-xs font-medium text-gray-700 dark:text-slate-300">Email</label>
           <input
             name="email"
             type="email"
             defaultValue={usuario?.email}
             required
-            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-700">
-            Senha {usuario && <span className="text-gray-400">(deixe vazio para manter)</span>}
+          <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
+            Senha {usuario && <span className="text-gray-400 dark:text-slate-500">(deixe vazio para manter)</span>}
           </label>
           <input
             name="senha"
             type="password"
             minLength={6}
             required={!usuario}
-            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-700">Role</label>
+          <label className="text-xs font-medium text-gray-700 dark:text-slate-300">Role</label>
           <select
             name="role"
             defaultValue={usuario?.role ?? 'VENDEDOR'}
-            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           >
             {ROLES.map((r) => (
               <option key={r} value={r}>
@@ -89,16 +89,16 @@ export function UsuarioForm({ usuario, onConcluido }: Props) {
       </div>
 
       {state?.erro && (
-        <p className="rounded bg-red-50 px-3 py-1.5 text-sm text-red-600">{state.erro}</p>
+        <p className="rounded bg-red-50 px-3 py-1.5 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">{state.erro}</p>
       )}
       {state?.ok && (
-        <p className="rounded bg-green-50 px-3 py-1.5 text-sm text-green-600">Salvo com sucesso!</p>
+        <p className="rounded bg-green-50 px-3 py-1.5 text-sm text-green-600 dark:bg-green-900/30 dark:text-green-400">Salvo com sucesso!</p>
       )}
 
       <button
         type="submit"
         disabled={pending}
-        className="self-end rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="self-end rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-slate-200"
       >
         {pending ? 'Salvando...' : usuario ? 'Atualizar' : 'Criar usuário'}
       </button>

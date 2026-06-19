@@ -17,11 +17,11 @@ export function MetricasHeader({ pedidos, concluidosHoje }: Props) {
 
   return (
     <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="group rounded-2xl bg-white p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all">
+      <div className="group rounded-2xl bg-white p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all dark:bg-slate-800 dark:border-slate-700">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500 mb-1">Em andamento</p>
-            <p className="text-4xl font-bold text-slate-900">{emAndamento}</p>
+            <p className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Em andamento</p>
+            <p className="text-4xl font-bold text-slate-900 dark:text-slate-100">{emAndamento}</p>
           </div>
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg group-hover:scale-110 transition-transform">
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -31,11 +31,11 @@ export function MetricasHeader({ pedidos, concluidosHoje }: Props) {
         </div>
       </div>
       
-      <div className="group rounded-2xl bg-white p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all">
+      <div className="group rounded-2xl bg-white p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all dark:bg-slate-800 dark:border-slate-700">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500 mb-1">Concluídos hoje</p>
-            <p className="text-4xl font-bold text-slate-900">{concluidosHoje}</p>
+            <p className="text-sm font-medium text-slate-500 mb-1 dark:text-slate-400">Concluídos hoje</p>
+            <p className="text-4xl font-bold text-slate-900 dark:text-slate-100">{concluidosHoje}</p>
           </div>
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg group-hover:scale-110 transition-transform">
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,11 +45,11 @@ export function MetricasHeader({ pedidos, concluidosHoje }: Props) {
         </div>
       </div>
       
-      <div className={`group rounded-2xl p-6 shadow-sm border transition-all ${criticos > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
+      <div className={`group rounded-2xl p-6 shadow-sm border transition-all ${criticos > 0 ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <p className={`text-sm font-medium mb-1 ${criticos > 0 ? 'text-red-600' : 'text-slate-500'}`}>SLA crítico</p>
-            <p className={`text-4xl font-bold ${criticos > 0 ? 'text-red-700' : 'text-slate-900'}`}>{criticos}</p>
+            <p className={`text-sm font-medium mb-1 ${criticos > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-500 dark:text-slate-400'}`}>SLA crítico</p>
+            <p className={`text-4xl font-bold ${criticos > 0 ? 'text-red-700 dark:text-red-400' : 'text-slate-900 dark:text-slate-100'}`}>{criticos}</p>
           </div>
           <div className={`flex h-14 w-14 items-center justify-center rounded-xl shadow-lg group-hover:scale-110 transition-transform ${criticos > 0 ? 'bg-gradient-to-br from-red-500 to-rose-600' : 'bg-gradient-to-br from-slate-400 to-slate-500'} text-white`}>
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">

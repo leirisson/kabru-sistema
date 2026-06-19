@@ -40,53 +40,53 @@ export default async function UsuariosPage() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Gestão de Usuários</h1>
-          <p className="text-sm text-slate-500">Adicione, edite e remova usuários do sistema</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Gestão de Usuários</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Adicione, edite e remova usuários do sistema</p>
         </div>
       </div>
 
       {/* Formulário de criação */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">Novo Usuário</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Novo Usuário</h2>
         </div>
         <UsuarioForm />
       </div>
 
       {/* Lista */}
-      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="text-lg font-semibold text-slate-900">Todos os Usuários</h2>
-          <p className="text-sm text-slate-500">{usuarios.length} usuário(s) cadastrado(s)</p>
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
+        <div className="p-6 border-b border-slate-100 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-700/30">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Todos os Usuários</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{usuarios.length} usuário(s) cadastrado(s)</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-slate-50 border-b border-slate-100 dark:bg-slate-700/50 dark:border-slate-700">
               <tr>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Nome</th>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Email</th>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600">Cargo</th>
-                <th className="px-8 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-600">Ações</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Nome</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Email</th>
+                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Cargo</th>
+                <th className="px-8 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {usuarios.map((usuario) => (
-                <tr key={usuario.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={usuario.id} className="hover:bg-slate-50/70 transition-colors dark:hover:bg-slate-700/50">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
                       <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${ROLE_COLORS[usuario.role]} text-white text-sm font-bold`}>
                         {usuario.nome.charAt(0).toUpperCase()}
                       </div>
-                      <span className="font-semibold text-slate-900">{usuario.nome}</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">{usuario.nome}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <span className="text-slate-600">{usuario.email}</span>
+                    <span className="text-slate-600 dark:text-slate-300">{usuario.email}</span>
                   </td>
                   <td className="px-8 py-5">
                     <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-white ${ROLE_COLORS[usuario.role]}`}>
