@@ -12,13 +12,12 @@ async function main() {
   const senhaHash = await hash('Kabru@adm_2026', 10)
 
   await prisma.usuario.upsert({
-    where: { email: 'admin@kabru.local' },
+    where: { email: 'admin@kabru.com' },
     update: {},
     create: { nome: 'Administrador', email: 'admin@kabru.com', senhaHash, role: Role.ADMIN },
   })
 
   console.log('Seed concluído.')
-  console.log('Credenciais: admin@kabru.local / Kabru@adm_2026')
 }
 
 main()
