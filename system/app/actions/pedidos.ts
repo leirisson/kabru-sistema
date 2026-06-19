@@ -131,5 +131,6 @@ export async function salvarPedidoImportado(dados: {
   })
 
   revalidatePath('/painel', 'page')
+  revalidatePath('/pedidos', 'page')
   return { ok: true, pedidoId: pedido.id }
 }
