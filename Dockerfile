@@ -33,7 +33,7 @@ COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
-COPY --from=builder /app/node_modules/pdf2json ./node_modules/pdf2json
+COPY --from=builder /app/node_modules/pdf-parse ./node_modules/pdf-parse
 COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 COPY --from=builder /app/node_modules/.bin/tsx ./node_modules/.bin/tsx
 COPY entrypoint.sh ./entrypoint.sh
