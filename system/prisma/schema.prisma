@@ -6,35 +6,15 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  ADMIN
-  VENDEDOR
-  ESTOQUE
-  CONFERENCIA
-  FATURAMENTO
-  EXPEDICAO
-}
-
-enum StatusPedido {
-  AGUARDANDO_SEPARACAO
-  SEPARACAO
-  CONFERENCIA
-  CONFERIDO
-  FATURAMENTO
-  SEPARACAO_DESTINATARIO
-  CONCLUIDO
-}
-
 model Usuario {
-  id        String   @id @default(uuid())
-  nome      String
-  email     String   @unique
-  senhaHash String
-  role      Role
-  createdAt DateTime @default(now())
-
-  pedidosComoVendedor Pedido[]          @relation("Vendedor")
+  id                  String            @id @default(uuid())
+  nome                String
+  email               String            @unique
+  senhaHash           String
+  role                Role
+  createdAt           DateTime          @default(now())
   historicos          HistoricoStatus[]
+  pedidosComoVendedor Pedido[]          @relation("Vendedor")
 }
 
 model Cliente {
@@ -64,43 +44,62 @@ model Produto {
 model Pedido {
   id                String            @id @default(uuid())
   numero            Int               @unique
-  cliente           Cliente           @relation(fields: [clienteId], references: [id])
   clienteId         String
-  vendedor          Usuario           @relation("Vendedor", fields: [vendedorId], references: [id])
   vendedorId        String
   condicaoPagamento String
   dataEmissao       DateTime
   valorTotal        Decimal
   statusAtual       StatusPedido      @default(AGUARDANDO_SEPARACAO)
-  itens             ItemPedido[]
-  historico         HistoricoStatus[]
   createdAt         DateTime          @default(now())
+  historico         HistoricoStatus[]
+  itens             ItemPedido[]
+  cliente           Cliente           @relation(fields: [clienteId], references: [id])
+  vendedor          Usuario           @relation("Vendedor", fields: [vendedorId], references: [id])
 }
 
 model ItemPedido {
   id           String  @id @default(uuid())
-  pedido       Pedido  @relation(fields: [pedidoId], references: [id])
   pedidoId     String
-  produto      Produto @relation(fields: [produtoId], references: [id])
   produtoId    String
   quantidade   Int
   precoLiquido Decimal
   subtotal     Decimal
+  pedido       Pedido  @relation(fields: [pedidoId], references: [id])
+  produto      Produto @relation(fields: [produtoId], references: [id])
 }
 
 model HistoricoStatus {
   id         String       @id @default(uuid())
-  pedido     Pedido       @relation(fields: [pedidoId], references: [id])
   pedidoId   String
   status     StatusPedido
-  usuario    Usuario      @relation(fields: [usuarioId], references: [id])
   usuarioId  String
   observacao String?
   criadoEm   DateTime     @default(now())
+  pedido     Pedido       @relation(fields: [pedidoId], references: [id])
+  usuario    Usuario      @relation(fields: [usuarioId], references: [id])
 }
 
 model SlaConfig {
   status         StatusPedido @id
   avisoMinutos   Int
   criticoMinutos Int
+}
+
+enum Role {
+  ADMIN
+  VENDEDOR
+  ESTOQUE
+  CONFERENCIA
+  FATURAMENTO
+  EXPEDICAO
+}
+
+enum StatusPedido {
+  AGUARDANDO_SEPARACAO
+  SEPARACAO
+  CONFERENCIA
+  CONFERIDO
+  FATURAMENTO
+  SEPARACAO_DESTINATARIO
+  CONCLUIDO
 }
