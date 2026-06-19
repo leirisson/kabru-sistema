@@ -2,10 +2,10 @@
 set -e
 
 echo "Rodando migrations..."
-node node_modules/prisma/build/index.js migrate deploy
+node_modules/.bin/prisma migrate deploy
 
 echo "Rodando seed..."
-node node_modules/prisma/build/index.js db seed
+node_modules/.bin/prisma db seed
 
 echo "Iniciando aplicação..."
 exec node server.js
