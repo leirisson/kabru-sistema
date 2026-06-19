@@ -17,7 +17,7 @@ services:
 
   app:
     build:
-      context: ./system
+      context: .
       dockerfile: Dockerfile
     ports:
       - "3000:3000"

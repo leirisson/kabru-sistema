@@ -18,7 +18,7 @@ async function main() {
   })
 
   console.log('Seed concluído.')
-  console.log('Credenciais: admin@kabru.local / senha123')
+  console.log('Credenciais: admin@kabru.local / Kabru@adm_2026')
 }
 
 main()
