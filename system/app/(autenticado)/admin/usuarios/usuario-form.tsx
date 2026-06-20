@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { criarUsuario, atualizarUsuario } from '@/app/actions/admin'
 import type { Role } from '@prisma/client'
 
@@ -30,6 +30,7 @@ type Props = {
 export function UsuarioForm({ usuario, onConcluido }: Props) {
   const action = usuario ? atualizarUsuario : criarUsuario
   const [state, formAction, pending] = useActionState(action, null)
+  const [role, setRole] = useState<Role>(usuario?.role ?? 'VENDEDOR')
 
   if (state?.ok && onConcluido) onConcluido()
 
@@ -76,7 +77,8 @@ export function UsuarioForm({ usuario, onConcluido }: Props) {
           <label className="text-xs font-medium text-gray-700 dark:text-slate-300">Role</label>
           <select
             name="role"
-            defaultValue={usuario?.role ?? 'VENDEDOR'}
+            value={role}
+            onChange={(e) => setRole(e.target.value as Role)}
             className="rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           >
             {ROLES.map((r) => (

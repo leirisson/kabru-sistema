@@ -18,12 +18,13 @@ export const metadata = { title: 'Dashboard — Kabru Sistema' }
 export default async function DashboardPage() {
   const session = await verifySession()
 
+
   const hoje = new Date()
   hoje.setHours(0, 0, 0, 0)
 
   const [pedidos, slaConfigs, concluidosHoje, totalPedidos, ultimosPedidos] = await Promise.all([
     prisma.pedido.findMany({
-      where: { statusAtual: { not: 'CONCLUIDO' } },
+      where: { statusAtual: { not: { equals: 'CONCLUIDO' } } },
       include: { cliente: true, vendedor: true },
       orderBy: { createdAt: 'desc' },
     }),

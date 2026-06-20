@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { decrypt } from '@/lib/session'
 
-const ROTAS_PUBLICAS = ['/login']
+const ROTAS_PUBLICAS = ['/login', '/api/painel-events']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl

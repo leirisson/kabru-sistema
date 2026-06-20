@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { verifySession } from '@/lib/dal'
 import { STATUS_KANBAN, LABEL_STATUS } from '@/lib/status-flow'
 import { SlaForm } from './sla-form'
+import { SomConfig } from './som-config'
 import type { StatusPedido } from '@prisma/client'
 
 const STATUS_COLORS: Record<StatusPedido, string> = {
@@ -37,6 +38,8 @@ export default async function SlaPage() {
           <p className="text-sm text-slate-500 dark:text-slate-400">Defina os tempos de alerta e crítico por status</p>
         </div>
       </div>
+
+      <SomConfig />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {STATUS_KANBAN.map((status) => {

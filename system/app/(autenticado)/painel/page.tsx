@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { verifySession } from '@/lib/dal'
 import { calcularSla, formatarDecorrido } from '@/lib/sla'
-import { STATUS_KANBAN, LABEL_STATUS } from '@/lib/status-flow'
+import { STATUS_KANBAN, LABEL_STATUS, getPermissoesRoles } from '@/lib/status-flow'
 import type { StatusPedido } from '@prisma/client'
 import { KanbanColuna } from './kanban-coluna'
 import { MetricasHeader } from './metricas-header'
@@ -22,10 +22,10 @@ export default async function PainelPage(props: {
   const hoje = new Date()
   hoje.setHours(0, 0, 0, 0)
 
-  const [pedidos, slaConfigs, concluidosHoje] = await Promise.all([
+  const [pedidos, slaConfigs, concluidosHoje, permissoes] = await Promise.all([
     prisma.pedido.findMany({
       where: {
-        statusAtual: { not: 'CONCLUIDO' },
+        statusAtual: { not: { equals: 'CONCLUIDO' } },
         ...(filtroVendedorId ? { vendedorId: filtroVendedorId } : {}),
       },
       include: {
@@ -43,6 +43,7 @@ export default async function PainelPage(props: {
         historico: { some: { status: 'CONCLUIDO', criadoEm: { gte: hoje } } },
       },
     }),
+    getPermissoesRoles(),
   ])
 
   const slaMap = Object.fromEntries(slaConfigs.map((c) => [c.status, c]))
@@ -94,6 +95,7 @@ export default async function PainelPage(props: {
             status={status as StatusPedido}
             pedidos={colPedidos}
             userRole={session.role}
+            podeAvancarPara={permissoes[session.role]}
           />
         ))}
       </div>

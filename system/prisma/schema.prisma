@@ -86,6 +86,11 @@ model SlaConfig {
   criticoMinutos Int
 }
 
+model PermissaoRole {
+  role            Role     @id
+  podeAvancarPara String[]
+}
+
 enum Role {
   ADMIN
   VENDEDOR

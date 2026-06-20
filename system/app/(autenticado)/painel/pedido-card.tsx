@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { SlaStatus } from '@/lib/sla'
 import type { Role, StatusPedido } from '@prisma/client'
-import { NEXT_STATUS, ROLE_PODE_AVANCAR, LABEL_STATUS } from '@/lib/status-flow'
+import { NEXT_STATUS, LABEL_STATUS } from '@/lib/status-flow'
 import { AvancarStatusButton } from './avancar-status-button'
 
 const COR_SLA: Record<SlaStatus, string> = {
@@ -22,11 +22,12 @@ type Props = {
   slaStatus: SlaStatus
   tempoDecorrido: string
   userRole: Role
+  podeAvancarPara: StatusPedido[]
 }
 
-export function PedidoCard({ pedido, slaStatus, tempoDecorrido, userRole }: Props) {
+export function PedidoCard({ pedido, slaStatus, tempoDecorrido, userRole, podeAvancarPara }: Props) {
   const proximoStatus = NEXT_STATUS[pedido.statusAtual] as StatusPedido | null
-  const podeAvancar = proximoStatus ? ROLE_PODE_AVANCAR[userRole].includes(proximoStatus) : false
+  const podeAvancar = proximoStatus ? podeAvancarPara.includes(proximoStatus) : false
 
   return (
     <div className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500">

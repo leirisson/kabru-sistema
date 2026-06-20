@@ -28,9 +28,10 @@ type Props = {
   status: StatusPedido
   pedidos: PedidoComSla[]
   userRole: Role
+  podeAvancarPara: StatusPedido[]
 }
 
-export function KanbanColuna({ status, pedidos, userRole }: Props) {
+export function KanbanColuna({ status, pedidos, userRole, podeAvancarPara }: Props) {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <div className="flex items-center justify-between rounded-2xl bg-slate-100 px-4 py-3 dark:bg-slate-700">
@@ -61,6 +62,7 @@ export function KanbanColuna({ status, pedidos, userRole }: Props) {
               slaStatus={p.slaStatus}
               tempoDecorrido={p.tempoDecorrido}
               userRole={userRole}
+              podeAvancarPara={podeAvancarPara}
             />
           ))
         )}

@@ -91,6 +91,27 @@ export async function deletarUsuario(id: string): Promise<{ erro?: string; ok?: 
   return { ok: true }
 }
 
+export async function atualizarPermissaoRole(
+  prevState: { erro?: string; ok?: boolean } | null,
+  formData: FormData,
+): Promise<{ erro?: string; ok?: boolean }> {
+  const bloqueio = await checarAdmin()
+  if (bloqueio) return bloqueio
+
+  const role = formData.get('role') as string
+  const podeAvancarPara = formData.getAll('podeAvancarPara') as string[]
+
+  await prisma.permissaoRole.upsert({
+    where: { role: role as Role },
+    update: { podeAvancarPara },
+    create: { role: role as Role, podeAvancarPara },
+  })
+
+  revalidatePath('/admin/permissoes', 'page')
+  revalidatePath('/painel', 'page')
+  return { ok: true }
+}
+
 const slaSchema = z.object({
   status: z.string(),
   avisoMinutos: z.number().int().positive(),

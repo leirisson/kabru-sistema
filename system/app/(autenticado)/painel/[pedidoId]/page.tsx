@@ -43,12 +43,6 @@ export default async function DetalhePedidoPage(props: {
         <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
           <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-slate-300">Dados do Pedido</h2>
           <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt className="text-gray-500 dark:text-slate-400">Cliente</dt>
-            <dd className="text-gray-900 dark:text-slate-200">
-              {pedido.cliente.nomeFantasia ?? pedido.cliente.razaoSocial}
-            </dd>
-            <dt className="text-gray-500 dark:text-slate-400">CNPJ</dt>
-            <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.cnpj}</dd>
             <dt className="text-gray-500 dark:text-slate-400">Vendedor</dt>
             <dd className="text-gray-900 dark:text-slate-200">{pedido.vendedor.nome}</dd>
             <dt className="text-gray-500 dark:text-slate-400">Emissão</dt>
@@ -64,6 +58,64 @@ export default async function DetalhePedidoPage(props: {
                 currency: 'BRL',
               })}
             </dd>
+          </dl>
+        </div>
+
+        {/* Dados do cliente */}
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+          <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-slate-300">Dados do Cliente</h2>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt className="text-gray-500 dark:text-slate-400">Razão Social</dt>
+            <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.razaoSocial}</dd>
+            {pedido.cliente.nomeFantasia && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">Nome Fantasia</dt>
+                <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.nomeFantasia}</dd>
+              </>
+            )}
+            <dt className="text-gray-500 dark:text-slate-400">CNPJ</dt>
+            <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.cnpj}</dd>
+            {pedido.cliente.inscricaoEstadual && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">Insc. Estadual</dt>
+                <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.inscricaoEstadual}</dd>
+              </>
+            )}
+            {pedido.cliente.telefone && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">Telefone</dt>
+                <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.telefone}</dd>
+              </>
+            )}
+            {pedido.cliente.email && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">E-mail</dt>
+                <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.email}</dd>
+              </>
+            )}
+            {pedido.cliente.endereco && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">Endereço</dt>
+                <dd className="text-gray-900 dark:text-slate-200">
+                  {pedido.cliente.endereco}
+                  {pedido.cliente.bairro ? `, ${pedido.cliente.bairro}` : ''}
+                </dd>
+              </>
+            )}
+            {(pedido.cliente.cidade || pedido.cliente.estado) && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">Cidade/UF</dt>
+                <dd className="text-gray-900 dark:text-slate-200">
+                  {[pedido.cliente.cidade, pedido.cliente.estado].filter(Boolean).join(' — ')}
+                </dd>
+              </>
+            )}
+            {pedido.cliente.cep && (
+              <>
+                <dt className="text-gray-500 dark:text-slate-400">CEP</dt>
+                <dd className="text-gray-900 dark:text-slate-200">{pedido.cliente.cep}</dd>
+              </>
+            )}
           </dl>
         </div>
 

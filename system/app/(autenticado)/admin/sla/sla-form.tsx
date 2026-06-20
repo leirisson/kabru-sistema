@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { atualizarSla } from '@/app/actions/admin'
 import type { StatusPedido } from '@prisma/client'
-import { LABEL_STATUS } from '@/lib/status-flow'
+import { LABEL_STATUS } from '@/lib/status-constants'
 
 type Props = {
   status: StatusPedido
