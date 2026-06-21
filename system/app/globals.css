@@ -72,6 +72,14 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Scrollbar invisível globalmente */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
 /* Modo tela cheia do Kanban */
 .kanban-fullscreen header {
   display: none;
