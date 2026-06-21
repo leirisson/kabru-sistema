@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { verifySession } from '@/lib/dal'
-import { redirect } from 'next/navigation'
+import { verifyRotaPermitida } from '@/lib/dal'
 import { LABEL_STATUS } from '@/lib/status-flow'
 import Link from 'next/link'
 import type { StatusPedido } from '@prisma/client'
@@ -31,12 +30,7 @@ export default async function FinanceiroPage({
 }: {
   searchParams: Promise<SearchParams>
 }) {
-  const session = await verifySession()
-
-  const roles_permitidos = ['ADMIN', 'FATURAMENTO', 'VENDEDOR'] as const
-  if (!roles_permitidos.includes(session.role as (typeof roles_permitidos)[number])) {
-    redirect('/dashboard')
-  }
+  const session = await verifyRotaPermitida('/financeiro')
 
   const params = await searchParams
   const isVendedor = session.role === 'VENDEDOR'
@@ -69,7 +63,14 @@ export default async function FinanceiroPage({
       : {}),
   }
 
-  const [pedidos, vendedores] = await Promise.all([
+  const agora = new Date()
+  const inicioMesAtual = new Date(agora.getFullYear(), agora.getMonth(), 1)
+  const inicioMesAnterior = new Date(agora.getFullYear(), agora.getMonth() - 1, 1)
+  const fimMesAnterior = new Date(agora.getFullYear(), agora.getMonth(), 0, 23, 59, 59, 999)
+
+  const baseVendedorFilter = isVendedor ? { vendedorId: session.userId } : {}
+
+  const [pedidos, vendedores, faturadoMesAtual, faturadoMesAnterior, ticketPorStatus] = await Promise.all([
     prisma.pedido.findMany({
       where,
       include: { cliente: true, vendedor: true, itens: true },
@@ -82,12 +83,32 @@ export default async function FinanceiroPage({
           select: { id: true, nome: true },
         })
       : Promise.resolve([]),
+    prisma.pedido.aggregate({
+      where: { ...baseVendedorFilter, statusAtual: 'CONCLUIDO', dataEmissao: { gte: inicioMesAtual } },
+      _sum: { valorTotal: true },
+    }),
+    prisma.pedido.aggregate({
+      where: { ...baseVendedorFilter, statusAtual: 'CONCLUIDO', dataEmissao: { gte: inicioMesAnterior, lte: fimMesAnterior } },
+      _sum: { valorTotal: true },
+    }),
+    prisma.pedido.groupBy({
+      by: ['statusAtual'],
+      where: { ...baseVendedorFilter, statusAtual: { in: STATUS_FINANCEIROS } },
+      _avg: { valorTotal: true },
+      _count: { id: true },
+    }),
   ])
 
   const totalFaturado = pedidos.reduce((sum, p) => sum + Number(p.valorTotal), 0)
   const totalConcluidos = pedidos.filter(p => p.statusAtual === 'CONCLUIDO').length
   const totalEmFaturamento = pedidos.filter(p => p.statusAtual === 'FATURAMENTO').length
   const ticketMedio = pedidos.length > 0 ? totalFaturado / pedidos.length : 0
+
+  const valorMesAtual = Number(faturadoMesAtual._sum.valorTotal ?? 0)
+  const valorMesAnterior = Number(faturadoMesAnterior._sum.valorTotal ?? 0)
+  const crescimentoMM = valorMesAnterior > 0
+    ? ((valorMesAtual - valorMesAnterior) / valorMesAnterior) * 100
+    : null
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -96,15 +117,15 @@ export default async function FinanceiroPage({
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shrink-0">
+            <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Financeiro</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">Financeiro</h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               {isVendedor ? 'Seus pedidos em faturamento' : 'Visão financeira geral'}
             </p>
           </div>
@@ -251,6 +272,80 @@ export default async function FinanceiroPage({
         </div>
       </div>
 
+      {/* KPIs Mensais + Valor médio por status */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Comparativo mensal */}
+        <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Faturamento Mensal</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                {agora.toLocaleString('pt-BR', { month: 'long' }).charAt(0).toUpperCase() +
+                  agora.toLocaleString('pt-BR', { month: 'long' }).slice(1)}
+              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{fmt(valorMesAtual)}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                {new Date(agora.getFullYear(), agora.getMonth() - 1).toLocaleString('pt-BR', { month: 'long' }).charAt(0).toUpperCase() +
+                  new Date(agora.getFullYear(), agora.getMonth() - 1).toLocaleString('pt-BR', { month: 'long' }).slice(1)}
+              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{fmt(valorMesAnterior)}</p>
+            </div>
+          </div>
+          <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
+            {crescimentoMM === null ? (
+              <span className="text-sm text-slate-400">Sem dados do mês anterior</span>
+            ) : (
+              <>
+                <span className={`text-2xl font-bold ${crescimentoMM >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`}>
+                  {crescimentoMM >= 0 ? '+' : ''}{crescimentoMM.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">vs. mês anterior</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Ticket médio por status */}
+        <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-r from-[#007ACC] to-[#005B9E] text-white">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Valor Médio por Status</h2>
+          </div>
+          <div className="space-y-4">
+            {ticketPorStatus.map(item => (
+              <div key={item.statusAtual} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className={`inline-block h-2.5 w-2.5 rounded-full ${STATUS_COLORS[item.statusAtual]}`} />
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    {LABEL_STATUS[item.statusAtual]}
+                  </span>
+                  <span className="text-xs text-slate-400">({item._count.id})</span>
+                </div>
+                <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                  {fmt(Number(item._avg.valorTotal ?? 0))}
+                </span>
+              </div>
+            ))}
+            {ticketPorStatus.length === 0 && (
+              <p className="text-sm text-slate-400">Sem dados disponíveis</p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Tabela de pedidos */}
       <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
         <div className="px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
@@ -267,63 +362,63 @@ export default async function FinanceiroPage({
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-100 dark:bg-slate-700/50 dark:border-slate-700">
               <tr>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Pedido</th>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Cliente</th>
+                <th className="px-4 sm:px-8 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Pedido</th>
+                <th className="px-4 sm:px-8 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Cliente</th>
                 {podeVerTodos && (
-                  <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Vendedor</th>
+                  <th className="px-4 sm:px-8 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400 hidden md:table-cell">Vendedor</th>
                 )}
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Status</th>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Emissão</th>
-                <th className="px-8 py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Cond. Pagto</th>
-                <th className="px-8 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Valor Total</th>
+                <th className="px-4 sm:px-8 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Status</th>
+                <th className="px-4 sm:px-8 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400 hidden sm:table-cell">Emissão</th>
+                <th className="px-4 sm:px-8 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400 hidden lg:table-cell">Cond. Pagto</th>
+                <th className="px-4 sm:px-8 py-3 sm:py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">Valor Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {pedidos.length === 0 && (
                 <tr>
-                  <td colSpan={podeVerTodos ? 7 : 6} className="px-8 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+                  <td colSpan={podeVerTodos ? 7 : 6} className="px-4 sm:px-8 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
                     Nenhum pedido encontrado para os filtros selecionados.
                   </td>
                 </tr>
               )}
               {pedidos.map((pedido) => (
                 <tr key={pedido.id} className="hover:bg-slate-50/70 transition-colors group dark:hover:bg-slate-700/50">
-                  <td className="px-8 py-4">
-                    <Link href={`/painel/${pedido.id}`} className="flex items-center gap-3">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-white text-sm font-bold ${STATUS_COLORS[pedido.statusAtual]}`}>
+                  <td className="px-4 sm:px-8 py-3 sm:py-4">
+                    <Link href={`/painel/${pedido.id}`} className="flex items-center gap-2 sm:gap-3">
+                      <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl text-white text-xs sm:text-sm font-bold shrink-0 ${STATUS_COLORS[pedido.statusAtual]}`}>
                         {pedido.numero}
                       </div>
-                      <span className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors dark:text-slate-100 dark:group-hover:text-emerald-400">
+                      <span className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors dark:text-slate-100 dark:group-hover:text-emerald-400 text-sm">
                         #{pedido.numero}
                       </span>
                     </Link>
                   </td>
-                  <td className="px-8 py-4">
+                  <td className="px-4 sm:px-8 py-3 sm:py-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900 dark:text-slate-100">{pedido.cliente.nomeFantasia || pedido.cliente.razaoSocial}</span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">{pedido.cliente.cnpj}</span>
+                      <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{pedido.cliente.nomeFantasia || pedido.cliente.razaoSocial}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">{pedido.cliente.cnpj}</span>
                     </div>
                   </td>
                   {podeVerTodos && (
-                    <td className="px-8 py-4">
+                    <td className="px-4 sm:px-8 py-3 sm:py-4 hidden md:table-cell">
                       <span className="text-sm text-slate-700 dark:text-slate-300">{pedido.vendedor.nome}</span>
                     </td>
                   )}
-                  <td className="px-8 py-4">
-                    <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-white ${STATUS_COLORS[pedido.statusAtual]}`}>
+                  <td className="px-4 sm:px-8 py-3 sm:py-4">
+                    <span className={`inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold text-white ${STATUS_COLORS[pedido.statusAtual]}`}>
                       {LABEL_STATUS[pedido.statusAtual]}
                     </span>
                   </td>
-                  <td className="px-8 py-4">
+                  <td className="px-4 sm:px-8 py-3 sm:py-4 hidden sm:table-cell">
                     <span className="text-sm text-slate-700 dark:text-slate-300">
                       {new Date(pedido.dataEmissao).toLocaleDateString('pt-BR')}
                     </span>
                   </td>
-                  <td className="px-8 py-4">
+                  <td className="px-4 sm:px-8 py-3 sm:py-4 hidden lg:table-cell">
                     <span className="text-sm text-slate-700 dark:text-slate-300">{pedido.condicaoPagamento}</span>
                   </td>
-                  <td className="px-8 py-4 text-right">
-                    <span className="text-base font-bold text-slate-900 dark:text-slate-100">
+                  <td className="px-4 sm:px-8 py-3 sm:py-4 text-right">
+                    <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
                       {fmt(Number(pedido.valorTotal))}
                     </span>
                   </td>
@@ -333,10 +428,10 @@ export default async function FinanceiroPage({
             {pedidos.length > 0 && (
               <tfoot className="bg-slate-50 border-t-2 border-slate-200 dark:bg-slate-700/50 dark:border-slate-600">
                 <tr>
-                  <td colSpan={podeVerTodos ? 6 : 5} className="px-8 py-4 text-sm font-bold text-slate-700 dark:text-slate-300">
+                  <td colSpan={podeVerTodos ? 6 : 5} className="px-4 sm:px-8 py-3 sm:py-4 text-sm font-bold text-slate-700 dark:text-slate-300">
                     Total ({pedidos.length} pedidos)
                   </td>
-                  <td className="px-8 py-4 text-right text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                  <td className="px-4 sm:px-8 py-3 sm:py-4 text-right text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400">
                     {fmt(totalFaturado)}
                   </td>
                 </tr>

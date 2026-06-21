@@ -1,6 +1,6 @@
 import type { SlaStatus } from '@/lib/sla'
 import type { Role, StatusPedido } from '@prisma/client'
-import { LABEL_STATUS } from '@/lib/status-flow'
+import { LABEL_STATUS } from '@/lib/status-constants'
 import { PedidoCard } from './pedido-card'
 
 const STATUS_COLORS: Record<StatusPedido, string> = {

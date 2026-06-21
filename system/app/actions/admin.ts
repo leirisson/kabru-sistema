@@ -91,6 +91,8 @@ export async function deletarUsuario(id: string): Promise<{ erro?: string; ok?: 
   return { ok: true }
 }
 
+const ROLES_CONFIGURÁVEIS = z.enum(['VENDEDOR', 'ESTOQUE', 'CONFERENCIA', 'FATURAMENTO', 'EXPEDICAO'])
+
 export async function atualizarPermissaoRole(
   prevState: { erro?: string; ok?: boolean } | null,
   formData: FormData,
@@ -98,17 +100,59 @@ export async function atualizarPermissaoRole(
   const bloqueio = await checarAdmin()
   if (bloqueio) return bloqueio
 
-  const role = formData.get('role') as string
+  const roleParsed = ROLES_CONFIGURÁVEIS.safeParse(formData.get('role'))
+  if (!roleParsed.success) return { erro: 'Role inválido ou não configurável' }
+
+  const role = roleParsed.data
   const podeAvancarPara = formData.getAll('podeAvancarPara') as string[]
+  const rotasPermitidas = formData.getAll('rotasPermitidas') as string[]
 
   await prisma.permissaoRole.upsert({
     where: { role: role as Role },
-    update: { podeAvancarPara },
-    create: { role: role as Role, podeAvancarPara },
+    update: { podeAvancarPara, rotasPermitidas },
+    create: { role: role as Role, podeAvancarPara, rotasPermitidas },
   })
 
   revalidatePath('/admin/permissoes', 'page')
   revalidatePath('/painel', 'page')
+  return { ok: true }
+}
+
+export async function atualizarPermissaoUsuario(
+  prevState: { erro?: string; ok?: boolean } | null,
+  formData: FormData,
+): Promise<{ erro?: string; ok?: boolean }> {
+  const bloqueio = await checarAdmin()
+  if (bloqueio) return bloqueio
+
+  const usuarioId = formData.get('usuarioId') as string
+  if (!usuarioId) return { erro: 'Usuário inválido' }
+
+  const podeAvancarPara = formData.getAll('podeAvancarPara') as string[]
+  const rotasPermitidas = formData.getAll('rotasPermitidas') as string[]
+
+  const existe = await prisma.usuario.findUnique({ where: { id: usuarioId }, select: { id: true } })
+  if (!existe) return { erro: 'Usuário não encontrado' }
+
+  await prisma.permissaoUsuario.upsert({
+    where: { usuarioId },
+    update: { podeAvancarPara, rotasPermitidas },
+    create: { usuarioId, podeAvancarPara, rotasPermitidas },
+  })
+
+  revalidatePath('/admin/permissoes', 'page')
+  revalidatePath('/painel', 'page')
+  return { ok: true }
+}
+
+export async function removerPermissaoUsuario(
+  usuarioId: string,
+): Promise<{ erro?: string; ok?: boolean }> {
+  const bloqueio = await checarAdmin()
+  if (bloqueio) return bloqueio
+
+  await prisma.permissaoUsuario.deleteMany({ where: { usuarioId } })
+  revalidatePath('/admin/permissoes', 'page')
   return { ok: true }
 }
 

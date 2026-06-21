@@ -1,18 +1,44 @@
 import { redirect } from 'next/navigation'
 import { verifySession } from '@/lib/dal'
-import { getPermissoesRoles } from '@/lib/status-flow'
+import { getPermissoesRolesAdmin, getPermissoesUsuario } from '@/lib/status-flow'
 import { PermissaoForm } from './permissao-form'
+import { PermissaoUsuarioForm } from './permissao-usuario-form'
+import { BuscaUsuario } from './busca-usuario'
+import { prisma } from '@/lib/prisma'
 import type { Role } from '@prisma/client'
 
 export const metadata = { title: 'Permissões — Kabru Sistema' }
 
 const ROLES_CONFIGURÁVEIS: Role[] = ['VENDEDOR', 'ESTOQUE', 'CONFERENCIA', 'FATURAMENTO', 'EXPEDICAO']
 
-export default async function PermissoesPage() {
+export default async function PermissoesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ usuarioId?: string }>
+}) {
   const session = await verifySession()
   if (session.role !== 'ADMIN') redirect('/painel')
 
-  const permissoes = await getPermissoesRoles()
+  const { usuarioId } = await searchParams
+
+  // Busca todos os usuários não-admin para o seletor
+  const usuarios = await prisma.usuario.findMany({
+    where: { role: { not: 'ADMIN' } },
+    select: { id: true, nome: true, role: true },
+    orderBy: { nome: 'asc' },
+  })
+
+  // Se há usuário selecionado, busca as permissões individuais dele
+  const usuarioSelecionado = usuarioId
+    ? usuarios.find((u) => u.id === usuarioId) ?? null
+    : null
+
+  const permissoesUsuario = usuarioSelecionado
+    ? await getPermissoesUsuario(usuarioSelecionado.id, usuarioSelecionado.role)
+    : null
+
+  // Permissões de role para os cards padrão
+  const { podeAvancarPara, rotasPermitidas } = await getPermissoesRolesAdmin()
 
   return (
     <div className="space-y-8">
@@ -23,24 +49,56 @@ export default async function PermissoesPage() {
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Permissões de Perfil</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Controle quais status cada perfil pode avançar no kanban</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Permissões</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Configure permissões por perfil ou busque um usuário para personalizá-las
+          </p>
         </div>
       </div>
 
       <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
         <strong>Admin</strong> sempre tem acesso completo e não pode ser restringido.
-        Vendedor não avança status — apenas visualiza.
+        Permissões por usuário sobrescrevem as do perfil.
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {ROLES_CONFIGURÁVEIS.map((role) => (
-          <PermissaoForm
-            key={role}
-            role={role}
-            podeAvancarPara={permissoes[role]}
+      {/* Busca de usuário */}
+      <BuscaUsuario
+        usuarios={usuarios}
+        usuarioSelecionadoId={usuarioId}
+      />
+
+      {/* Card do usuário selecionado */}
+      {usuarioSelecionado && permissoesUsuario && (
+        <div>
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
+            Permissões individuais —{' '}
+            <span className="text-indigo-600 dark:text-indigo-400">{usuarioSelecionado.nome}</span>
+          </h2>
+          <PermissaoUsuarioForm
+            usuarioId={usuarioSelecionado.id}
+            usuarioNome={usuarioSelecionado.nome}
+            role={usuarioSelecionado.role}
+            podeAvancarPara={permissoesUsuario.podeAvancarPara}
+            rotasPermitidas={permissoesUsuario.rotasPermitidas}
           />
-        ))}
+        </div>
+      )}
+
+      {/* Cards de role */}
+      <div>
+        <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
+          Permissões por perfil
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {ROLES_CONFIGURÁVEIS.map((role) => (
+            <PermissaoForm
+              key={role}
+              role={role}
+              podeAvancarPara={podeAvancarPara[role]}
+              rotasPermitidas={rotasPermitidas[role]}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

@@ -71,3 +71,13 @@ body {
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+/* Modo tela cheia do Kanban */
+.kanban-fullscreen header {
+  display: none;
+}
+
+.kanban-fullscreen main {
+  padding: 1rem !important;
+  max-width: 100% !important;
+}

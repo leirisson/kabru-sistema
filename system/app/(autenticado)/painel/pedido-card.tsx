@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { SlaStatus } from '@/lib/sla'
 import type { Role, StatusPedido } from '@prisma/client'
-import { NEXT_STATUS, LABEL_STATUS } from '@/lib/status-flow'
+import { NEXT_STATUS, LABEL_STATUS } from '@/lib/status-constants'
 import { AvancarStatusButton } from './avancar-status-button'
 
 const COR_SLA: Record<SlaStatus, string> = {

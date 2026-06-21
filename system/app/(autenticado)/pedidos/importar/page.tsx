@@ -1,15 +1,10 @@
-import { verifySession } from '@/lib/dal'
-import { redirect } from 'next/navigation'
+import { verifyRotaPermitida } from '@/lib/dal'
 import { RevisaoForm } from './revisao-form'
 
 export const metadata = { title: 'Importar Pedido — Kabru Sistema' }
 
 export default async function ImportarPedidoPage() {
-  const session = await verifySession()
-
-  if (session.role !== 'VENDEDOR' && session.role !== 'ADMIN') {
-    redirect('/painel')
-  }
+  const session = await verifyRotaPermitida('/pedidos/importar')
 
   return (
     <div className="mx-auto max-w-3xl">

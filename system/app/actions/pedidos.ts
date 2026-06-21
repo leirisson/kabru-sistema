@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { verifySession } from '@/lib/dal'
-import { NEXT_STATUS, getPermissoesRoles } from '@/lib/status-flow'
+import { NEXT_STATUS, getPermissoesUsuario } from '@/lib/status-flow'
 import { sseBus } from '@/lib/sse-bus'
 
 function emitirAtualizacao() {
@@ -30,8 +30,8 @@ export async function avancarStatus(pedidoId: string): Promise<ActionResult> {
   const proximoStatus = NEXT_STATUS[pedido.statusAtual] as StatusPedido | null
   if (!proximoStatus) return { erro: 'Pedido já está concluído' }
 
-  const permissoes = await getPermissoesRoles()
-  const podeAvancar = permissoes[session.role].includes(proximoStatus)
+  const { podeAvancarPara } = await getPermissoesUsuario(session.userId, session.role)
+  const podeAvancar = podeAvancarPara.includes(proximoStatus)
   if (!podeAvancar) return { erro: `Sem permissão para avançar para ${proximoStatus}` }
 
   await prisma.$transaction([

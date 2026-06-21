@@ -16,6 +16,7 @@ model Usuario {
   createdAt           DateTime          @default(now())
   historicos          HistoricoStatus[]
   pedidosComoVendedor Pedido[]          @relation("Vendedor")
+  permissao           PermissaoUsuario?
 }
 
 model Cliente {
@@ -89,6 +90,14 @@ model SlaConfig {
 model PermissaoRole {
   role            Role     @id
   podeAvancarPara String[]
+  rotasPermitidas String[]
+}
+
+model PermissaoUsuario {
+  usuarioId       String   @id
+  podeAvancarPara String[]
+  rotasPermitidas String[]
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

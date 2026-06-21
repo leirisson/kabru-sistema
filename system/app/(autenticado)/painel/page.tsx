@@ -1,11 +1,13 @@
 import { prisma } from '@/lib/prisma'
-import { verifySession } from '@/lib/dal'
+import { verifyRotaPermitida } from '@/lib/dal'
 import { calcularSla, formatarDecorrido } from '@/lib/sla'
-import { STATUS_KANBAN, LABEL_STATUS, getPermissoesRoles } from '@/lib/status-flow'
+import { STATUS_KANBAN, LABEL_STATUS, getPermissoesUsuario } from '@/lib/status-flow'
 import type { StatusPedido } from '@prisma/client'
 import { KanbanColuna } from './kanban-coluna'
+import { KanbanMobile } from './kanban-mobile'
 import { MetricasHeader } from './metricas-header'
 import { PainelPoller } from './painel-poller'
+import { FullscreenToggle } from './fullscreen-toggle'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,7 +15,7 @@ export default async function PainelPage(props: {
   searchParams: Promise<{ vendedorId?: string }>
 }) {
   const [session, searchParams] = await Promise.all([
-    verifySession(),
+    verifyRotaPermitida('/painel'),
     props.searchParams,
   ])
 
@@ -43,7 +45,7 @@ export default async function PainelPage(props: {
         historico: { some: { status: 'CONCLUIDO', criadoEm: { gte: hoje } } },
       },
     }),
-    getPermissoesRoles(),
+    getPermissoesUsuario(session.userId, session.role),
   ])
 
   const slaMap = Object.fromEntries(slaConfigs.map((c) => [c.status, c]))
@@ -71,16 +73,19 @@ export default async function PainelPage(props: {
     <div>
       <PainelPoller intervaloMs={20000} />
 
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Painel de Pedidos</h1>
-        {filtroVendedorId && (
-          <a href="/painel" className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 transition-colors dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            Limpar filtro
-          </a>
-        )}
+      <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Painel de Pedidos</h1>
+        <div className="flex items-center gap-2">
+          {filtroVendedorId && (
+            <a href="/painel" className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50 transition-colors dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Limpar filtro
+            </a>
+          )}
+          <FullscreenToggle />
+        </div>
       </div>
 
       <MetricasHeader
@@ -88,14 +93,24 @@ export default async function PainelPage(props: {
         concluidosHoje={concluidosHoje}
       />
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${STATUS_KANBAN.length}, minmax(0, 1fr))` }}>
+      {/* Mobile: abas, uma coluna por vez */}
+      <div className="lg:hidden">
+        <KanbanMobile
+          colunas={colunas}
+          userRole={session.role}
+          podeAvancarPara={permissoes.podeAvancarPara}
+        />
+      </div>
+
+      {/* Desktop: todas as colunas em grid */}
+      <div className="hidden lg:grid gap-4" style={{ gridTemplateColumns: `repeat(${STATUS_KANBAN.length}, minmax(0, 1fr))` }}>
         {colunas.map(({ status, pedidos: colPedidos }) => (
           <KanbanColuna
             key={status}
             status={status as StatusPedido}
             pedidos={colPedidos}
             userRole={session.role}
-            podeAvancarPara={permissoes[session.role]}
+            podeAvancarPara={permissoes.podeAvancarPara}
           />
         ))}
       </div>
